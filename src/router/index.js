@@ -1,39 +1,34 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-
-
-
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
   {
-    path: '/',
-    name: '首页',
-    component: () => import('../layout'),
-    redirect:'/index',
-    children:[
+    path: "/",
+    name: "Layout",
+    component: () => import("../layout"), // 布局组件
+    redirect: "/index",
+    children: [
       {
-        path: '/index',
-        name: '首页',
-        component: () => import('../views/index/index.vue')
+        path: "index", // 注意：子路由路径不需要前缀斜杠
+        name: "首页",
+        component: () => import("../views/index/index.vue"),
       },
       {
-        path: '/userCenter',
-        name: '个人中心',
-        component: () => import('../views/userCenter/index.vue')
-      }
-    ]
+        path: "userCenter",
+        name: "个人中心",
+        component: () => import("../views/userCenter/index.vue"),
+      },
+    ],
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/Login.vue')
-  }
-]
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue"),
+  },
+];
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
-})
+  routes,
+});
 
-
-
-export default router
+export default router;
