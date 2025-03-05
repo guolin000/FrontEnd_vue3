@@ -1,5 +1,5 @@
 <template>
-  岗位管理
+  节点查询
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-  岗位管理
+  文献表单
 </template>
 
 <script setup>

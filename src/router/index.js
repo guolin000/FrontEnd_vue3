@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    name: "Layout",
+    name: "首页",
     component: () => import("../layout"), // 布局组件
     redirect: "/index",
     children: [
