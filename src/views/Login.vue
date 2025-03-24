@@ -96,7 +96,8 @@
   };
 
   const getCode=async ()=>{
-
+    // 如果没有 await，requestUtil.get() 会立即返回一个 Promise，
+    // 而此时请求可能还没完成，result 会是一个未解析的 Promise 对象。
     let result=await requestUtil.get("/user/captcha");
     console.log(result)
     loginForm.value.uuid=result.data.uuid;
@@ -131,6 +132,7 @@
              const menuList=data.menuList;
              console.log("token:",token)
              store.commit('SET_TOKEN', token)
+             window.sessionStorage.setItem('token', token);
              console.log("currentUser:"+currentUser)
              currentUser.roles=data.roles
              store.commit("SET_USERINFO",currentUser);

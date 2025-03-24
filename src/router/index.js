@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-
+import BookList from '../views/document/doc/BookList.vue';
+import BookDetail from '../views/document/doc/BookDetail.vue';
 const routes = [
   {
     path: "/",
@@ -17,6 +18,8 @@ const routes = [
         name: "个人中心",
         component: () => import("../views/userCenter/index.vue"),
       },
+      { path: '/', name: 'BookList', component: BookList },
+      { path: '/book/:id', name: 'BookDetail', component: BookDetail },
     ],
   },
   {
@@ -24,6 +27,7 @@ const routes = [
     name: "Login",
     component: () => import("../views/Login.vue"),
   },
+
 ];
 
 const router = createRouter({

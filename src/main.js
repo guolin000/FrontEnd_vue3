@@ -12,6 +12,7 @@ import SvgIcon from '@/icons'
 
 // 国际化中文
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import {post} from "axios";
 
 const app=createApp(App)
 
@@ -24,3 +25,17 @@ app.use(store)
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
+
+// 定时刷新 Token（每 4 分钟）
+setInterval(async () => {
+    const token = window.sessionStorage.getItem('token');
+    if (token) {
+        try {
+            const res = await post('/api-token-refresh/', { token });
+            window.sessionStorage.setItem('token', res.token);
+            console.log('Token refreshed:', res.token);
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+        }
+    }
+}, 240000);  // 4 分钟 = 240秒
