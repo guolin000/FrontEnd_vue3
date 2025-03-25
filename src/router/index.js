@@ -18,7 +18,7 @@ const routes = [
         name: "个人中心",
         component: () => import("../views/userCenter/index.vue"),
       },
-      { path: '/', name: 'BookList', component: BookList },
+      { path: '/', name: '书籍列表', component: BookList },
       { path: '/book/:id', name: 'BookDetail', component: BookDetail },
     ],
   },

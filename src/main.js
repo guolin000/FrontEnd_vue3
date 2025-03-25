@@ -14,6 +14,10 @@ import SvgIcon from '@/icons'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import {post} from "axios";
 
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css'; // 使用 Ant Design 的 reset.css
+
+
 const app=createApp(App)
 
 app.use(ElementPlus, {
@@ -21,6 +25,7 @@ app.use(ElementPlus, {
 })
 
 SvgIcon(app);
+app.use(Antd);
 app.use(store)
 app.use(router)
 app.use(ElementPlus)

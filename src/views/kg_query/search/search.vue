@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { Search, Edit, RefreshRight } from '@element-plus/icons-vue';
 import * as echarts from 'echarts';
 import requestUtil from '@/utils/request';
@@ -48,6 +48,20 @@ const results = ref([]);
 const activeTab = ref('list');
 const route = useRoute();
 const router = useRouter();
+let myChart = null; // 保存 ECharts 实例
+
+// 实体类型与颜色的映射
+const entityColors = {
+  '方剂': '#4ecdc4',
+  '中医疾病': '#ff6b6b',
+  '症状': '#ffa502',
+  '服法': '#95e1d3',
+  '用药禁忌': '#f94144',
+  '煎法': '#45b7d1',
+  '用法': '#a2cffe',
+  '中药': '#2a9d8f',
+  'default': '#d3d3d3'
+};
 
 const search = async () => {
   if (!query.value) {
@@ -56,11 +70,13 @@ const search = async () => {
   }
   try {
     console.log('查询关键词:', query.value);
-    // 使用字符串拼接格式发送请求
     const res = await requestUtil.get(`/kg/search/?q=${encodeURIComponent(query.value)}`);
     console.log('后端返回数据:', res.data);
-    results.value = res.data.nodes;
-    if (activeTab.value === 'graph') renderGraph(res.data);
+    results.value = res.data.nodes || []; // 确保 nodes 不为 undefined
+    if (activeTab.value === 'graph') {
+      await nextTick(); // 等待 DOM 更新
+      renderGraph(res.data);
+    }
   } catch (error) {
     console.error('请求失败:', error);
     ElMessage.error('查询失败: ' + error.message);
@@ -70,19 +86,56 @@ const search = async () => {
 const reset = () => {
   query.value = '';
   results.value = [];
-  const chart = echarts.getInstanceByDom(document.getElementById('graphChart'));
-  if (chart) chart.clear();
+  if (myChart) {
+    myChart.clear();
+    myChart.dispose();
+    myChart = null;
+  }
 };
 
 const renderGraph = (graphData) => {
   const chartDom = document.getElementById('graphChart');
-  const myChart = echarts.init(chartDom);
+  if (!chartDom) {
+    console.error('图表容器未找到');
+    return;
+  }
+
+  // 如果容器不可见，延迟初始化
+  if (chartDom.offsetParent === null) {
+    console.warn('图表容器不可见，延迟初始化');
+    setTimeout(() => renderGraph(graphData), 100);
+    return;
+  }
+
+  // 销毁旧实例并初始化新实例
+  if (myChart) {
+    myChart.dispose();
+  }
+  myChart = echarts.init(chartDom);
+
+  // 处理节点数据，提取类型
+  const nodes = graphData.nodes || [];
+  const uniqueTypes = [...new Set(nodes.map(node => node.type || '未知'))];
+  const legendData = uniqueTypes; // 直接使用类型名称数组
+
+  // 调试日志
+  console.log('唯一实体类型:', uniqueTypes);
+  console.log('图例数据:', legendData);
+  console.log('节点数据:', nodes);
+
   const option = {
-    title: {text: '知识图谱', left: 'center', textStyle: {fontFamily: '宋体', fontSize: 20}},
+    title: { text: '知识图谱', left: 'center', textStyle: { fontFamily: 'Songti', fontSize: 20 } },
+    legend: {
+      data: legendData,
+      left: 'left',
+      top: 'top',
+      icon: 'circle',
+      textStyle: { fontFamily: 'Songti', fontSize: 14 }
+    },
     tooltip: {
       formatter: (params) => {
         if (params.dataType === 'node') {
-          return `${params.data.type}: ${params.data.name}`;
+          return `${params.data.type || '未知'}: ${params.data.name}`;
         } else {
           return `关系: ${params.data.value}`;
         }
@@ -91,34 +144,45 @@ const renderGraph = (graphData) => {
     series: [{
       type: 'graph',
       layout: 'force',
-      data: graphData.nodes.map(node => ({
+      data: nodes.map(node => ({
         ...node,
         symbolSize: 20,
-        itemStyle: {color: node.type === '疾病' ? '#ff6b6b' : node.type === '症状' ? '#4ecdc4' : '#45b7d1'}
+        itemStyle: { color: entityColors[node.type] || entityColors['default'] }
       })),
-      links: graphData.links,
+      links: graphData.links || [],
       roam: true,
-      label: {show: true, fontFamily: '楷体', fontSize: 14},
-      force: {repulsion: 150, edgeLength: 120},
+      label: { show: true, fontFamily: 'Kaiti', fontSize: 14 },
+      force: { repulsion: 150, edgeLength: 120 },
       edgeSymbol: ['circle', 'arrow'],
       edgeLabel: {
         show: true,
-        formatter: '{c}', // 显示关系类型
-        fontFamily: '楷体',
+        formatter: '{c}',
+        fontFamily: 'Kaiti',
         fontSize: 12
       }
     }]
   };
+
   myChart.setOption(option);
+  console.log('ECharts 配置:', option);
+
+  // 监听窗口大小变化
+  window.addEventListener('resize', () => {
+    if (myChart) myChart.resize();
+  });
 };
 
 const viewDetail = (id) => {
   router.push(`/detail/${id}`);
 };
 
-const handleTabClick = () => {
+const handleTabClick = async () => {
   if (activeTab.value === 'graph' && results.value.length) {
+    await nextTick(); // 等待 DOM 更新
     search();
+  } else if (activeTab.value === 'list' && myChart) {
+    myChart.dispose();
+    myChart = null;
   }
 };
 
@@ -126,6 +190,13 @@ onMounted(() => {
   if (route.query.q) {
     query.value = route.query.q;
     search();
+  }
+});
+
+onUnmounted(() => {
+  if (myChart) {
+    myChart.dispose();
+    myChart = null;
   }
 });
 </script>
@@ -142,11 +213,11 @@ onMounted(() => {
 }
 
 .el-table {
-  font-family: '宋体', serif;
+  font-family: 'Songti', serif;
 }
 
 .el-tabs__item {
-  font-family: '楷体', serif;
+  font-family: 'Kaiti', serif;
   font-size: 16px;
 }
 </style>
