@@ -12,7 +12,7 @@
         </el-card>
       </el-col>
       <el-col :span="18">
-        <el-card style="height: 800px">
+        <el-card style="height: 710px">
           <el-tabs v-model="activeTab" @tab-click="handleTabClick">
             <el-tab-pane label="列表" name="list">
               <el-table :data="results" style="width: 100%">
@@ -204,6 +204,7 @@ onUnmounted(() => {
 <style scoped>
 .search-container {
   padding: 20px;
+  height: 100vh;
   background: #f5f7fa;
 }
 

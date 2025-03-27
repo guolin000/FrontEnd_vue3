@@ -16,7 +16,7 @@ const httpService = axios.create({
     // baseURL: process.env.BASE_API, // 生产环境可以通过环境变量（如 process.env.BASE_API）动态替换 baseUrl
     baseURL: baseUrl,  //所有请求的 URL 都会拼接在这个基础地址后。
     // 请求超时时间
-    timeout: 4000 // 需自定义  //请求超时时间为 3000 毫秒（3 秒），超时后会触发错误
+    timeout: 60000 // 需自定义  //请求超时时间为 3000 毫秒（3 秒），超时后会触发错误
 });
 
 // 刷新 Token 的函数

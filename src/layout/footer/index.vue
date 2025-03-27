@@ -10,6 +10,7 @@
 
 <style lang="scss" scoped>
 .footer{
+  //height: 10px;
   padding: 20px;
   display: flex;
   align-items: center;
