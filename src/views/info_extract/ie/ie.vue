@@ -26,7 +26,7 @@
     <div class="right-panel">
       <div class="chart-container" ref="chartContainer"></div>
       <a-button type="primary" @click="saveData" class="save-btn">
-        保存预测数据
+        导出抽取数据
       </a-button>
     </div>
     <a-modal v-model:visible="loading" :footer="null" :closable="false" centered>
