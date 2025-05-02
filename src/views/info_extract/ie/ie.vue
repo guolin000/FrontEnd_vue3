@@ -13,7 +13,7 @@
           :loading="loading"
           class="predict-btn"
         >
-          {{ loading ? '预测中...' : '实体与关系预测' }}
+          {{ loading ? '抽取中...' : '实体与关系抽取' }}
         </a-button>
       </div>
       <div class="result-section">
@@ -74,7 +74,6 @@ export default {
         const response = await requestUtil.post('/info_extract/predict', {
           text: inputText.value
         });
-        // 从 response.data.data 中提取实际数据
         if (response.data.code === 0) {
           resultData.value = response.data.data;
           updateChart(response.data.data);
@@ -97,7 +96,7 @@ export default {
         return;
       }
       const option = {
-        title: {text: '实体关系图谱'},
+        title: { text: '实体关系图谱' },
         tooltip: {},
         series: [
           {
@@ -110,12 +109,12 @@ export default {
             links: data.relations.map((rel) => ({
               source: rel.source,
               target: rel.target,
-              value: rel.type
+              label: { show: true, formatter: rel.type }
             })),
-            categories: [...new Set(data.entities.map((e) => e.type))].map((type) => ({name: type})),
+            categories: [...new Set(data.entities.map((e) => e.type))].map((type) => ({ name: type })),
             roam: true,
-            label: {show: true},
-            force: {repulsion: 100}
+            label: { show: true },
+            force: { repulsion: 100 }
           }
         ]
       };
@@ -184,7 +183,7 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  height: 100vh;
+  height: 83vh;
   position: relative;
 }
 

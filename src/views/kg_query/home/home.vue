@@ -35,12 +35,23 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <el-card class="wordcloud-card">
+      <h3 class="wordcloud-title">知识图谱词云</h3>
+      <div v-if="loading" class="loading">加载中...</div>
+      <div v-else class="wordcloud-container">
+        <div ref="wordcloudChart" class="wordcloud-chart"></div>
+      </div>
+      <div v-if="!loading && wordcloudData.length === 0" class="no-data">暂无词云数据</div>
+    </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { Search } from '@element-plus/icons-vue';
+import * as echarts from 'echarts';
+import 'echarts-wordcloud'; // 引入词云插件
 import requestUtil from '@/utils/request';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
@@ -52,6 +63,9 @@ const overview = ref({
   node_types: 0,
   rel_types: 0,
 });
+const wordcloudData = ref([]);
+const loading = ref(true);
+const wordcloudChart = ref(null);
 const router = useRouter();
 
 const fetchOverview = async () => {
@@ -59,8 +73,62 @@ const fetchOverview = async () => {
     const res = await requestUtil.get('kg/overview');
     overview.value = res.data;
   } catch (error) {
+    console.error('Error fetching overview:', error);
     ElMessage.error('获取概览数据失败');
   }
+};
+
+const fetchWordcloudData = async () => {
+  try {
+    loading.value = true;
+    const res = await requestUtil.get('kg/wordcloud');
+    console.log('Fetched wordcloud data:', res.data);
+    if (res.data.error) {
+      throw new Error(res.data.error);
+    }
+    wordcloudData.value = res.data.data || [];
+    await nextTick();
+    initWordCloud();
+  } catch (error) {
+    console.error('Error fetching wordcloud:', error);
+    ElMessage.error('获取词云数据失败: ' + (error.message || '未知错误'));
+    wordcloudData.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
+const initWordCloud = () => {
+  if (!wordcloudChart.value) return;
+
+  const chart = echarts.init(wordcloudChart.value);
+  const option = {
+    tooltip: {
+      show: true,
+    },
+    series: [{
+      type: 'wordCloud',
+      shape: 'circle',
+      sizeRange: [12, 50], // 字体大小范围
+      rotationRange: [-45, 0, 45, 90], // 旋转角度
+      gridSize: 2,
+      drawOutOfBound: true,
+      textStyle: {
+        fontFamily: 'Arial, sans-serif',
+        fontWeight: 'bold',
+        color: function () {
+          const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96c93d', '#f7d794', '#ff9f43'];
+          return colors[Math.floor(Math.random() * colors.length)];
+        }
+      },
+      data: wordcloudData.value.map(item => ({
+        name: item.name,
+        value: item.value,
+      }))
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize', () => chart.resize());
 };
 
 const handleSearch = () => {
@@ -73,6 +141,7 @@ const handleSearch = () => {
 
 onMounted(() => {
   fetchOverview();
+  fetchWordcloudData();
 });
 </script>
 
@@ -87,6 +156,7 @@ onMounted(() => {
   margin-bottom: 20px;
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -98,11 +168,13 @@ onMounted(() => {
 .stat-card {
   text-align: center;
   transition: all 0.3s;
+  background: #fff;
+  border-radius: 8px;
 }
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .stat-title {
@@ -116,5 +188,42 @@ onMounted(() => {
   font-size: 32px;
   font-weight: bold;
   color: #409eff;
+}
+
+.wordcloud-card {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.wordcloud-title {
+  font-family: '楷体', serif;
+  font-size: 22px;
+  color: #303133;
+  text-align: center;
+  margin: 15px 0;
+  background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.wordcloud-container {
+  width: 100%;
+  height: 450px;
+}
+
+.wordcloud-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.loading,
+.no-data {
+  text-align: center;
+  font-size: 16px;
+  color: #606266;
+  padding: 20px;
 }
 </style>
