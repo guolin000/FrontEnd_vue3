@@ -2,7 +2,7 @@
   <div class="login">
 
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">中医疫病知识库系统</h3>
+      <h1 class="title">中  医  疫  病  知  识  库  平  台</h1>
 
       <el-form-item prop="username">
 
@@ -176,7 +176,7 @@ a{
   justify-content: center;
   align-items: center;
   height: 100%;
-  //background-image: url("../assets/images/login-background.jpg");
+  background-image: url("../assets/images/background.jpg");
   background-color: #707070;
   background-size: cover;
 }
@@ -184,6 +184,8 @@ a{
   margin: 0px auto 30px auto;
   text-align: center;
   color: #707070;
+  font-size: 22px;
+  font-weight: bolder;
 }
 
 .login-form {
