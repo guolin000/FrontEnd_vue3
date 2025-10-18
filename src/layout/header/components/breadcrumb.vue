@@ -42,7 +42,7 @@ watch(route,()=>{
   cursor:text;
 }
 .redirect{
-  color:#666;
+  color:#2D2D2D;
   font-weight:600;
   cursor:pointer;
   &:hover{

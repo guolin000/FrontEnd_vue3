@@ -8,7 +8,7 @@
     <div class="book-content">
       <div class="book-header">
         <div class="book-info">
-          <h1>{{ book.title }}</h1>
+          <h1>《{{ book.title }}》</h1>
           <div class="meta">
             <p>作者：{{ book.author }}</p>
             <p>朝代：{{ book.dynasty }}</p>
@@ -162,17 +162,22 @@ onMounted(fetchBook);
 <style scoped>
 .book-detail {
   padding: 30px;
-  max-width: 60%;
-  max-height: 96%;
+  max-width: 100%;
+  max-height: 97%;
   margin: 5px auto;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   position: relative;
+  background-image: url("../../../assets/images/back1.jpg") ;
+  background-repeat:round;
 }
 
 .book-content {
   margin-top: 40px;
+  max-width: 51%;
+  //text-align: center;
+  //margin-left: 30%;
 }
 
 .book-header {
@@ -188,14 +193,14 @@ onMounted(fetchBook);
 }
 
 h1 {
-  font-size: 32px;
+  font-size: 34px;
   color: #333;
   margin-bottom: 15px;
   font-weight: 600;
 }
 
 .meta p {
-  font-size: 16px;
+  font-size: 18px;
   color: #666;
   margin: 8px 0;
 }
@@ -214,19 +219,21 @@ h1 {
 
 .page-content {
   width: 100%;
-  height: 510px;
-  background: #fefefe;
+  height: 650px;
+  background: #faf4e3;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   overflow-y: auto;
   padding: 25px;
   line-height: 2;
   font-size: 16px;
-  color: #333;
-  text-align: justify;
+  color: #333333;
+  text-align: left;
   box-sizing: border-box;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
   animation: flip 0.6s ease;
+  margin-left: 45%;
+  margin-top: -165px;
 }
 
 .page-inner {

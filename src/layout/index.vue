@@ -30,8 +30,14 @@ import Tabs from '@/layout/tabs'
 }
 
 .sidebar-container {
-  background-color: #2d3a4b;
+  background-color: #E3F9FD;
   height: 100%;
+  width: 12.8%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 5px;
+  border-radius: 50px;
 }
 
 .el-container{

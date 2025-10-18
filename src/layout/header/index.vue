@@ -17,11 +17,12 @@ import Avatar from './components/avatar.vue'
   width: 100%;
   height: 60px;
   overflow: hidden;
-  background-color: #F5F5F5;
+  background-color: #bcd4e7;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   padding: 0 16px;
   display: flex;
   align-items: center;
+  border-radius: 20px;
   box-sizing: border-box;
   position: relative;
   .navbar-right {

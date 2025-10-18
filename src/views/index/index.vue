@@ -8,19 +8,19 @@
       <el-col :span="6">
         <el-card class="stat-card">
           <h3 class="stat-title">总实体数量</h3>
-          <p class="stat-value">12592</p>
+          <p class="stat-value">16592</p>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card class="stat-card">
           <h3 class="stat-title">总关系数量</h3>
-          <p class="stat-value">8080</p>
+          <p class="stat-value">9045</p>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card class="stat-card">
           <h3 class="stat-title">实体类型数量</h3>
-          <p class="stat-value">17</p>
+          <p class="stat-value">18</p>
         </el-card>
       </el-col>
       <el-col :span="6">
